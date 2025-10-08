@@ -1,6 +1,5 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import axios from 'axios'
 import api from "@/api/api.js"
 import { ref, onMounted } from 'vue'
 
@@ -14,7 +13,7 @@ const handleDelete = async () => {
 	if (!ok){
 		return 
 	}
-		const resp = await axios.delete(`/api/v1/boards/${props.board.id}`)
+		const resp = await api.delete(`/api/v1/boards/${props.board.id}`)
 }
 
 const iso = props.board.created_at

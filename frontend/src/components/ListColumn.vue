@@ -2,7 +2,7 @@
 import TaskCard from '@/components/TaskCard.vue'
 import CreateTaskOverlay from '@/components/CreateTaskOverlay.vue'
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from "@/api/api.js"
 
 const showCreateTask = ref(false)
 const props = defineProps({
@@ -20,7 +20,7 @@ const handleDeleteList = () => {
 	if (!ok){
 		return
 	}
-	axios.delete(`/api/lists/${props.list.list_id}`)
+	api.delete(`/api/lists/${props.list.list_id}`)
 }
 
 function handleCloseCreateTaskOverlay() {

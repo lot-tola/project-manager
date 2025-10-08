@@ -1,7 +1,6 @@
 <script setup>
 import {useRoute, useRouter } from 'vue-router'
 import {onMounted, reactive, ref} from 'vue'
-import axios from 'axios'
 import api from "@/api/api.js"
 const route = useRoute()
 const id = route.params.id
@@ -15,7 +14,7 @@ const state = reactive({
 const formatted = ref("")
 const handleUpdate = async () => {
 	try{
-		await axios.put(`/api/v1/tasks/edit/${id}`, {
+		await api.put(`/api/v1/tasks/edit/${id}`, {
 			task_title: state.task.task_title,
 			description: state.task.description,
 			due_date: formatted.value,
@@ -31,7 +30,7 @@ const handleUpdate = async () => {
 }
 
 onMounted(async () => {
-	const resp = await axios.get(`/api/v1/task/${id}`)
+	const resp = await api.get(`/api/v1/task/${id}`)
 	state.task = resp.data
 	const iso = state.task.due_date
 	const date = new Date(iso)
