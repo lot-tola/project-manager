@@ -29,7 +29,6 @@ const fetchBoards = async () => {
 	try {
 		error.value = null
 		const resp = await api.get("/v1/boards")
-		console.log(resp.data)
 		boards.value = resp.data.filter(item => typeof item === 'object')
 	} catch (err) {
 		console.error("Error fetching boards:", err)
