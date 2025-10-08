@@ -17,8 +17,6 @@ const boardTitle = ref('')
 const createNewTask = () => {
 	return
 }
-
-
 const state = reactive({
 	lists: [],
 	isLoading: true,
@@ -26,6 +24,8 @@ const state = reactive({
 	draggedTask: null,
 	draggedFromList: null
 })
+
+const listLength = ref(state.lists.length)
 
 // Drag and drop handlers
 const handleDragStart = (event, task, listId) => {
@@ -52,12 +52,10 @@ const handleDrop = async (event, targetListId) => {
 
 	if (state.draggedTask && state.draggedFromList !== targetListId) {
 		try {
-			// Move task to new list
 			await axios.put(`http://localhost:5000/v1/tasks/${state.draggedTask.id}/move`, {
 				list_id: targetListId
 			})
 
-			// Refresh the board
 			await fetchLists()
 		} catch (err) {
 			console.error('Error moving task:', err)
@@ -87,6 +85,7 @@ const fetchLists = async () => {
 		state.isLoading = true
 		const resp = await axios.get(`http://localhost:5000/v1/lists/${boardID}`)
 		state.lists = resp.data
+		listLength.value = state.lists.length
 		state.lists = Object.values(
 			resp.data.reduce((acc, item) => {
 				if (!acc[item.list_id]) {
@@ -126,7 +125,7 @@ onMounted(fetchLists)
 						</RouterLink>
 						<div>
 							<h1 class="text-2xl font-bold text-gray-800">{{ boardTitle.board_title }}</h1>
-							<!--<p class="text-gray-600">{{ state.lists.length }} lists</p> -->
+							<p class="text-gray-600">{{ state.lists.length }} lists</p>
 						</div>
 					</div>
 
@@ -148,10 +147,11 @@ onMounted(fetchLists)
 		<div v-if="showCreateList" class="glass-card mx-4 mt-4 rounded-2xl p-6">
 			<form @submit.prevent="createNewList" class="space-y-4">
 				<div>
-					<label class="block text-sm font-medium text-gray-700 mb-2">List Title</label>
-					<input v-model="newListTitle" type="text" required
-						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-						placeholder="Enter list title...">
+					<label class="block text-sm font-medium text-gray-700 mb-2">
+						<input v-model="newListTitle" type="text" required
+							class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+							placeholder="Enter list title...">
+					</label>
 				</div>
 				<div class="flex space-x-3">
 					<button type="submit" class="btn-primary">
@@ -169,8 +169,9 @@ onMounted(fetchLists)
 		<div class="p-4">
 			<div class="max-w-7xl mx-auto">
 				<div class="flex space-x-6 overflow-x-auto pb-6">
-					<div v-for="list in state.lists" :key="list.list_id" class="flex-shrink-0">
-						<ListColumn :list="list" />
+					<div v-if="listLength === 0" class="red font-bold w-full h-full mt-40 text-center text-3xl opacity-50">No list yet. Create One?</div>
+					<div v-else v-for="list in state.lists" :key="list.list_id" class="flex-shrink-0">
+						<ListColumn v-if="list" :list="list" :boardID="boardID" />
 					</div>
 				</div>
 			</div>
@@ -179,23 +180,6 @@ onMounted(fetchLists)
 		<!-- Loading State -->
 		<div v-if="state.isLoading" class="flex justify-center items-center py-12">
 			<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-		</div>
-
-		<div v-else class="p-4">
-			<div class="max-w-7xl mx-auto">
-				<div class="flex space-x-6 overflow-x-auto pb-4">
-					<!-- Add New List Button -->
-					<div v-if="!showCreateList" class="flex-shrink-0">
-						<button @click="showCreateList = true"
-							class="w-80 h-32 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center text-gray-500 hover:border-indigo-500 hover:text-indigo-500 transition-colors duration-200 group">
-							<div class="text-center">
-								<i class="pi pi-plus text-2xl mb-2 group-hover:scale-110 transition-transform"></i>
-								<p class="font-medium">Add another list</p>
-							</div>
-						</button>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>

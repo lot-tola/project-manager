@@ -64,14 +64,13 @@ onMounted(fetchBoards)
 					</button>
 				</div>
 
-				<form v-if="showCreateForm" @submit.prevent="handleSubmit" class="space-y-4">
+				<form v-if="showCreateForm" @submit.prevent="handleSubmit" class="text-gray-800 space-y-4">
 					<div>
 						<label for="newboard" class="block text-sm font-medium text-gray-700 mb-2">
-							Board Title
-						</label>
 						<input v-model="title" type="text" id="newboard" name="title" required
 							class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
 							placeholder="Enter board title...">
+						</label>
 					</div>
 					<div class="flex space-x-3">
 						<button type="submit" class="btn-primary">

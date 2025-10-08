@@ -14,7 +14,7 @@ import (
 )
 
 const createTask = `-- name: CreateTask :one
-INSERT INTO tasks (id, list_id, task_title, description, due_date, assigned_to, status, labels, created_at, updated_at)
+INSERT INTO tasks (id, list_id, task_title, description, due_date, assigned_to, status, labels)
 VALUES (
     $1,
     $2,
@@ -23,9 +23,7 @@ VALUES (
     $5,
     $6,
     $7, 
-		$8,
-		$9,
-		$10
+		$8
 )
 RETURNING id, list_id, task_title, description, due_date, assigned_to, status, labels, created_at, updated_at
 `
@@ -39,8 +37,6 @@ type CreateTaskParams struct {
 	AssignedTo  string
 	Status      string
 	Labels      []string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
 }
 
 func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, error) {
@@ -53,8 +49,6 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 		arg.AssignedTo,
 		arg.Status,
 		pq.Array(arg.Labels),
-		arg.CreatedAt,
-		arg.UpdatedAt,
 	)
 	var i Task
 	err := row.Scan(
@@ -70,4 +64,64 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const deleteTask = `-- name: DeleteTask :exec
+DELETE FROM tasks WHERE id=$1
+`
+
+func (q *Queries) DeleteTask(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTask, id)
+	return err
+}
+
+const getTask = `-- name: GetTask :one
+SELECT id, list_id, task_title, description, due_date, assigned_to, status, labels, created_at, updated_at FROM tasks WHERE id=$1
+`
+
+func (q *Queries) GetTask(ctx context.Context, id uuid.UUID) (Task, error) {
+	row := q.db.QueryRowContext(ctx, getTask, id)
+	var i Task
+	err := row.Scan(
+		&i.ID,
+		&i.ListID,
+		&i.TaskTitle,
+		&i.Description,
+		&i.DueDate,
+		&i.AssignedTo,
+		&i.Status,
+		pq.Array(&i.Labels),
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateTask = `-- name: UpdateTask :exec
+UPDATE tasks
+SET task_title=$1, description=$2, due_date=$3, assigned_to=$4, status=$5, labels=$6
+WHERE id=$7
+`
+
+type UpdateTaskParams struct {
+	TaskTitle   string
+	Description string
+	DueDate     time.Time
+	AssignedTo  string
+	Status      string
+	Labels      []string
+	ID          uuid.UUID
+}
+
+func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
+	_, err := q.db.ExecContext(ctx, updateTask,
+		arg.TaskTitle,
+		arg.Description,
+		arg.DueDate,
+		arg.AssignedTo,
+		arg.Status,
+		pq.Array(arg.Labels),
+		arg.ID,
+	)
+	return err
 }

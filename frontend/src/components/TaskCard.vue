@@ -1,11 +1,15 @@
 <script setup>
 import { computed } from 'vue'
+import axios from 'axios'
+import { RouterLink } from 'vue-router'
 
 const props = defineProps({
-	task: {}
+	task: {},
+	boardID: {
+	type: String,
+	},
 })
 
-// Helpers to read values from either backend (sql.Null*) or demo JSON
 const readString = (obj, keyCandidates) => {
 	for (const key of keyCandidates) {
 		const val = obj?.[key]
@@ -24,6 +28,14 @@ const readDateISO = (obj, keyCandidates) => {
 		if (typeof val === 'string' || val instanceof Date) return val
 	}
 	return ''
+}
+
+const handleDeleteTask = () => {
+	const ok = confirm("Are you sure? This action can not be undone.")
+	if (!ok){
+		return 
+	}
+	axios.delete(`http://localhost:5000/v1/tasks/${props.task.task_id}`)
 }
 
 const title = computed(() => readString(props.task, ['task_title', 'title']))
@@ -50,13 +62,26 @@ const statusClass = computed(() => {
 </script>
 
 <template>
-	<div class="glass-card rounded-xl p-4 hover:shadow-lg transition-all duration-200">
+	<div v-if="props.task.task_id === null" class="font-bold opacity-50 text-center text-red-400">
+		No task yet. Create new task?
+	</div>
+	<div v-else class="glass-card rounded-xl p-4 hover:shadow-lg transition-all duration-200">
 		<!-- Title and menu -->
 		<div class="flex items-start justify-between mb-2">
 			<h4 class="text-gray-800 font-semibold leading-snug">{{ title || 'Untitled task' }}</h4>
-			<button class="text-gray-400 hover:text-indigo-600 transition-colors">
-				<i class="pi pi-ellipsis-h"></i>
-			</button>
+				<div class="dropdown">
+					<i tabindex="0" role="button" class="bg-white text-gray-800 h-5 rounded-lg border-none shadow-none pi pi-ellipsis-h btn m-1"></i>
+					<ul tabindex="0" class="dropdown-content menu bg-[#f6f6f6] text-black opacity-50 rounded-box z-1 w-52 p-2 shadow-sm ">
+						<form @submit="handleDeleteTask">
+							<li class="hover:bg-[#ececec] hover:rounded-md">
+								<button type="submit">Delete</button>
+							</li>
+						</form>
+							<li class="hover:bg-[#ececec] hover:rounded-md">
+						<RouterLink :to="`/boards/edit/${props.task.task_id}/${props.boardID}`">Edit</RouterLink>
+							</li>
+					</ul>
+				</div>
 		</div>
 
 		<!-- Meta row -->

@@ -9,9 +9,19 @@ const props = defineProps({
 	list: {
 		type: Object,
 		required: true
-	}
+	},
+	boardID: {
+	type: String
+},
 })
-console.log(props.list)
+
+const handleDeleteList = () => {
+	const ok = confirm("Are you sure you want to delete this list? This action can not be undone.")
+	if (!ok){
+		return
+	}
+	axios.delete(`http://localhost:5000/v1/lists/${props.list.list_id}`)
+}
 
 function handleCloseCreateTaskOverlay() {
 	showCreateTask.value = false
@@ -36,14 +46,17 @@ function handleOpenCreateTaskOverlay() {
 			</div>
 			<div class="space-y-3">
 				<div v-for="task in list.tasks" :key="task.id">
-					<TaskCard :task="task" />
+					<TaskCard :task="task" :boardID="props.boardID" />
 				</div>
 			</div>
-			<div class="mt-4">
+			<div class="mt-4 flex">
 				<button @click="handleOpenCreateTaskOverlay" class="btn-secondary w-full flex items-center justify-center space-x-2">
 					<i class="pi pi-plus"></i>
 					<span>Add task</span>
 				</button>
+				<form @submit="handleDeleteList">
+					<button type="submit" class="btn btn-error">X</button>
+				</form>
 			</div>
 		</div>
 	</div>

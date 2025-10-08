@@ -17,8 +17,8 @@ WHERE l.board_id = $1;
 SELECT * FROM lists;
 
 -- name: CreateList :one
-INSERT INTO lists (id, created_at, updated_at, board_id, list_title)
-VALUES ($1, $2, $3, $4, $5) RETURNING *;
+INSERT INTO lists (id, board_id, list_title)
+VALUES ($1, $2, $3) RETURNING *;
 
 -- name: UpdateList :one
 UPDATE lists SET list_title = $1, updated_at = $2 WHERE id = $3 RETURNING *;

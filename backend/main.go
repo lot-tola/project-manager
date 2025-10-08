@@ -20,18 +20,16 @@ type apiConfig struct {
 }
 
 func main() {
-	// Try to load .env file, but don't fail if it doesn't exist
 	godotenv.Load(".env")
 
 	portString := os.Getenv("PORT")
 	if portString == "" {
-		portString = "5000" // Default port
+		portString = "5000" 
 		fmt.Println("Using default port 5000")
 	}
 
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
-		// Use a default database URL for development
 		dbURL = "postgres://postgres:password@localhost/project_manager?sslmode=disable"
 		fmt.Println("Using default database URL. Please set DB_URL environment variable for production.")
 	}
@@ -41,15 +39,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Test the database connection
-	if err := conn.Ping(); err != nil {
-		fmt.Println("Database connection failed:", err)
-		fmt.Println("Please make sure PostgreSQL is running and the database exists.")
-		fmt.Println("You can create the database with: createdb project_manager")
-		os.Exit(1)
-	}
-
-	fmt.Println("Database connection successful!")
 	queries := database.New(conn)
 
 	apiCfg := apiConfig{
@@ -57,14 +46,14 @@ func main() {
 	}
 
 	router := chi.NewRouter()
-	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"*"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
-		MaxAge:           300,
-	}))
+router.Use(cors.Handler(cors.Options{
+    AllowedOrigins:   []string{"*"},
+    AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+    AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+    ExposedHeaders:   []string{"Link"},
+    AllowCredentials: false,
+    MaxAge:           300,
+}))
 
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthz", handleTest)
@@ -84,7 +73,10 @@ func main() {
 	v1Router.Delete("/lists/{id}", apiCfg.DeleteListHandler)
 
 	// Task routes
+	v1Router.Get("/task/{id}", apiCfg.GetTaskHandler)
 	v1Router.Post("/tasks", apiCfg.CreateTaskHandler)
+	v1Router.Delete("/tasks/{id}", apiCfg.DeleteTaskHandler)
+	v1Router.Put("/tasks/edit/{id}", apiCfg.UpdateTaskHandler)
 
 	router.Mount("/v1", v1Router)
 

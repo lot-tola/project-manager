@@ -52,8 +52,6 @@ func (apiCfg apiConfig) CreateListHandler(w http.ResponseWriter, r *http.Request
 
 	list, err := apiCfg.DB.CreateList(context.Background(), database.CreateListParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
 		BoardID:   params.BoardID,
 		ListTitle: params.Title,
 	})

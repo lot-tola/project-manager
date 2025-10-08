@@ -13,24 +13,17 @@ import (
 )
 
 const createBoard = `-- name: CreateBoard :one
-INSERT INTO boards (id, created_at, updated_at, board_title)
-VALUES ($1, $2, $3, $4) RETURNING id, board_title, created_at, updated_at
+INSERT INTO boards (id, board_title)
+VALUES ($1, $2) RETURNING id, board_title, created_at, updated_at
 `
 
 type CreateBoardParams struct {
 	ID         uuid.UUID
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
 	BoardTitle string
 }
 
 func (q *Queries) CreateBoard(ctx context.Context, arg CreateBoardParams) (Board, error) {
-	row := q.db.QueryRowContext(ctx, createBoard,
-		arg.ID,
-		arg.CreatedAt,
-		arg.UpdatedAt,
-		arg.BoardTitle,
-	)
+	row := q.db.QueryRowContext(ctx, createBoard, arg.ID, arg.BoardTitle)
 	var i Board
 	err := row.Scan(
 		&i.ID,

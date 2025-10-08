@@ -1,6 +1,6 @@
 -- name: CreateBoard :one
-INSERT INTO boards (id, created_at, updated_at, board_title)
-VALUES ($1, $2, $3, $4) RETURNING *;
+INSERT INTO boards (id, board_title)
+VALUES ($1, $2) RETURNING *;
 
 -- name: GetBoards :many
 SELECT * FROM boards;

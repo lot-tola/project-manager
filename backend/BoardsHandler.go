@@ -49,8 +49,6 @@ func (apiCfg apiConfig) CreateBoardHandler(w http.ResponseWriter, r *http.Reques
 	}
 	board, err := apiCfg.DB.CreateBoard(r.Context(), database.CreateBoardParams{
 		ID:         uuid.New(),
-		CreatedAt:  time.Now().UTC(),
-		UpdatedAt:  time.Now().UTC(),
 		BoardTitle: params.Title,
 	})
 	if err != nil {

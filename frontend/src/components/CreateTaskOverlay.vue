@@ -13,10 +13,10 @@ const emit = defineEmits(['close', 'created'])
 
 const task_title = ref('')
 const description = ref('')
-const due_date = ref('') // YYYY-MM-DD
+const due_date = ref('') 
 const assigned_to = ref('')
 const status = ref('todo')
-const labels = ref('') // comma-separated or single label
+const labels = ref('') 
 const loading = ref(false)
 const error = ref('')
 
@@ -51,7 +51,7 @@ function close() {
 
 <template>
 	<!-- Backdrop -->
-	<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+	<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 text-black">
 		<!-- Modal Card -->
 		<div class="glass-card rounded-2xl w-full max-w-lg p-6">
 			<div class="flex items-start justify-between mb-4">
@@ -59,7 +59,7 @@ function close() {
 				<button @click="close" class="text-gray-400 hover:text-gray-600"><i class="pi pi-times text-xl"></i></button>
 			</div>
 
-			<form @submit.prevent="handleSubmit" class="space-y-4">
+			<form @submit="handleSubmit" class="space-y-4">
 				<div>
 					<label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
 					<input v-model="task_title" type="text" required placeholder="Enter task title"

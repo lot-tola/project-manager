@@ -119,3 +119,4 @@ func dbTaskToTask(dbTask database.Task) Task {
 		UpdatedAt:   dbTask.UpdatedAt,
 	}
 }
+

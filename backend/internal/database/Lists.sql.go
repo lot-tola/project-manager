@@ -15,26 +15,18 @@ import (
 )
 
 const createList = `-- name: CreateList :one
-INSERT INTO lists (id, created_at, updated_at, board_id, list_title)
-VALUES ($1, $2, $3, $4, $5) RETURNING id, board_id, list_title, created_at, updated_at
+INSERT INTO lists (id, board_id, list_title)
+VALUES ($1, $2, $3) RETURNING id, board_id, list_title, created_at, updated_at
 `
 
 type CreateListParams struct {
 	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt time.Time
 	BoardID   uuid.UUID
 	ListTitle string
 }
 
 func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) (List, error) {
-	row := q.db.QueryRowContext(ctx, createList,
-		arg.ID,
-		arg.CreatedAt,
-		arg.UpdatedAt,
-		arg.BoardID,
-		arg.ListTitle,
-	)
+	row := q.db.QueryRowContext(ctx, createList, arg.ID, arg.BoardID, arg.ListTitle)
 	var i List
 	err := row.Scan(
 		&i.ID,
@@ -97,7 +89,7 @@ SELECT
     t.description,
     t.due_date,
     t.assigned_to,
-	t.status,
+		t.status,
     t.labels
 FROM lists l
 LEFT JOIN tasks t ON t.list_id = l.id
