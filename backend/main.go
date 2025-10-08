@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"log"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/lot-tola/project-manager/internal/database"
+	"github.com/pressly/goose/v3"
 )
 
 type apiConfig struct {
@@ -34,6 +36,14 @@ func main() {
 		fmt.Println("Cannot connect to database, Err: ", err)
 		os.Exit(1)
 	}
+	defer conn.Close()
+	if err := goose.SetDialect("postgres"); err != nil {
+			log.Fatal("Failed to set dialect:", err)
+	}
+	if err := goose.Up(conn, "../backend/sql/schema"); err != nil {  // Path relative to your project root
+			log.Fatal("Migration failed:", err)
+	}
+	log.Println("Migrations completed successfully")
 
 	queries := database.New(conn)
 

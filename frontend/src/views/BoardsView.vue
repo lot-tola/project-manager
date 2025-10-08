@@ -5,7 +5,6 @@ import { onMounted, ref } from 'vue'
 
 const boards = ref([])
 const title = ref("")
-const loading = ref(true)
 const error = ref(null)
 const showCreateForm = ref(false)
 
@@ -28,17 +27,15 @@ const handleSubmit = async () => {
 
 const fetchBoards = async () => {
 	try {
-		loading.value = true
 		error.value = null
 		const resp = await api.get("/v1/boards")
-		boards.value = resp.data
+		console.log(resp.data)
+		boards.value = resp.data.filter(item => typeof item === 'object')
 	} catch (err) {
 		console.error("Error fetching boards:", err)
 		error.value = err.message
 		boards.value = []
-	} finally {
-		loading.value = false
-	}
+	} 
 }
 
 onMounted(fetchBoards)
@@ -91,11 +88,6 @@ onMounted(fetchBoards)
 					<i class="pi pi-exclamation-triangle text-red-500 mr-3"></i>
 					<span class="text-red-700">{{ error }}</span>
 				</div>
-			</div>
-
-			<!-- Loading State -->
-			<div v-if="loading" class="flex justify-center items-center py-12">
-				<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
 			</div>
 
 			<!-- Boards Grid -->
