@@ -20,7 +20,7 @@ const handleDeleteList = () => {
 	if (!ok){
 		return
 	}
-	axios.delete(`http://localhost:5000/v1/lists/${props.list.list_id}`)
+	axios.delete(`/api/lists/${props.list.list_id}`)
 }
 
 function handleCloseCreateTaskOverlay() {

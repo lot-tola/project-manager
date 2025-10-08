@@ -1,6 +1,7 @@
 <script setup>
 import BoardCard from '../components/BoardCard.vue'
 import axios from 'axios'
+import api from "@/api/api.js"
 import { onMounted, ref } from 'vue'
 
 const boards = ref([])
@@ -13,7 +14,7 @@ const handleSubmit = async () => {
 	if (!title.value.trim()) return
 
 	try {
-		await axios.post("http://localhost:5000/v1/boards", {
+		await axios.post("/api/v1/boards", {
 			title: title.value
 		})
 		await fetchBoards()
@@ -30,7 +31,7 @@ const fetchBoards = async () => {
 	try {
 		loading.value = true
 		error.value = null
-		const resp = await axios.get("http://localhost:5000/v1/boards")
+		const resp = await axios.get("/api/v1/boards")
 		boards.value = resp.data
 	} catch (err) {
 		console.error("Error fetching boards:", err)

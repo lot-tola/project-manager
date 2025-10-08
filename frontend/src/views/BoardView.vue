@@ -3,6 +3,7 @@ import ListColumn from '@/components/ListColumn.vue';
 import { nextTick, reactive, computed, ref, onMounted } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
 import axios from 'axios';
+import api from "@/api/api.js"
 import CreateTaskOverlay from '@/components/CreateTaskOverlay.vue'
 import TaskCard from '@/components/TaskCard.vue'
 
@@ -52,7 +53,7 @@ const handleDrop = async (event, targetListId) => {
 
 	if (state.draggedTask && state.draggedFromList !== targetListId) {
 		try {
-			await axios.put(`http://localhost:5000/v1/tasks/${state.draggedTask.id}/move`, {
+			await axios.put(`/api/v1/tasks/${state.draggedTask.id}/move`, {
 				list_id: targetListId
 			})
 
@@ -67,7 +68,7 @@ const createNewList = async () => {
 	if (!newListTitle.value.trim()) return
 
 	try {
-		await axios.post(`http://localhost:5000/v1/lists`, {
+		await axios.post(`/api/v1/lists`, {
 			board_id: boardID,
 			title: newListTitle.value
 		})
@@ -83,7 +84,7 @@ const createNewList = async () => {
 const fetchLists = async () => {
 	try {
 		state.isLoading = true
-		const resp = await axios.get(`http://localhost:5000/v1/lists/${boardID}`)
+		const resp = await axios.get(`/api/v1/lists/${boardID}`)
 		state.lists = resp.data
 		listLength.value = state.lists.length
 		state.lists = Object.values(
@@ -101,7 +102,7 @@ const fetchLists = async () => {
 			}, {})
 		);
 
-		const resp1 = await axios.get(`http://localhost:5000/v1/boards/${boardID}`)
+		const resp1 = await axios.get(`/api/v1/boards/${boardID}`)
 		boardTitle.value = resp1.data
 	} catch (err) {
 		console.log("Error fetching lists", err)

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import api from "@/api/api.js"
 
 const props = defineProps({
 	list_id: {
@@ -25,7 +26,7 @@ async function handleSubmit() {
 	loading.value = true
 	error.value = ''
 	try {
-		await axios.post('http://localhost:5000/v1/tasks', {
+		await axios.post('/api/v1/tasks', {
 			list_id: String(props.list_id),
 			task_title: task_title.value,
 			description: description.value,

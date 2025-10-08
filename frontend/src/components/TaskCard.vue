@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import axios from 'axios'
+import api from "@/api/api.js"
 import { RouterLink } from 'vue-router'
 
 const props = defineProps({
@@ -35,7 +36,7 @@ const handleDeleteTask = () => {
 	if (!ok){
 		return 
 	}
-	axios.delete(`http://localhost:5000/v1/tasks/${props.task.task_id}`)
+	axios.delete(`/api/v1/tasks/${props.task.task_id}`)
 }
 
 const title = computed(() => readString(props.task, ['task_title', 'title']))
