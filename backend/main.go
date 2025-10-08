@@ -28,11 +28,7 @@ func main() {
 		fmt.Println("Using default port 5000")
 	}
 
-	dbURL := os.Getenv("DB_URL")
-	if dbURL == "" {
-		dbURL = "postgres://postgres:password@localhost/project_manager?sslmode=disable"
-		fmt.Println("Using default database URL. Please set DB_URL environment variable for production.")
-	}
+	dbURL := os.Getenv("DATABASE_URL")
 	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		fmt.Println("Cannot connect to database, Err: ", err)
@@ -47,7 +43,7 @@ func main() {
 
 	router := chi.NewRouter()
 router.Use(cors.Handler(cors.Options{
-    AllowedOrigins:   []string{"*"},
+    AllowedOrigins:   []string{"https://taskcosmos-pro.netlify.app/"},
     AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
     AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
     ExposedHeaders:   []string{"Link"},
