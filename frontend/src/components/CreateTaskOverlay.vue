@@ -25,7 +25,7 @@ async function handleSubmit() {
 	loading.value = true
 	error.value = ''
 	try {
-		await api.post('/api/v1/tasks', {
+		await api.post('/v1/tasks', {
 			list_id: String(props.list_id),
 			task_title: task_title.value,
 			description: description.value,

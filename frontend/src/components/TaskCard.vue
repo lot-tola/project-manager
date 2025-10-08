@@ -35,7 +35,7 @@ const handleDeleteTask = () => {
 	if (!ok){
 		return 
 	}
-	api.delete(`/api/v1/tasks/${props.task.task_id}`)
+	api.delete(`/v1/tasks/${props.task.task_id}`)
 }
 
 const title = computed(() => readString(props.task, ['task_title', 'title']))

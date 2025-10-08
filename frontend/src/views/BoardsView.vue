@@ -13,7 +13,7 @@ const handleSubmit = async () => {
 	if (!title.value.trim()) return
 
 	try {
-		await api.post("/api/v1/boards", {
+		await api.post("/v1/boards", {
 			title: title.value
 		})
 		await fetchBoards()
@@ -30,7 +30,7 @@ const fetchBoards = async () => {
 	try {
 		loading.value = true
 		error.value = null
-		const resp = await api.get("/api/v1/boards")
+		const resp = await api.get("/v1/boards")
 		boards.value = resp.data
 	} catch (err) {
 		console.error("Error fetching boards:", err)

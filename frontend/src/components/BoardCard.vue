@@ -13,7 +13,7 @@ const handleDelete = async () => {
 	if (!ok){
 		return 
 	}
-		const resp = await api.delete(`/api/v1/boards/${props.board.id}`)
+		const resp = await api.delete(`/v1/boards/${props.board.id}`)
 }
 
 const iso = props.board.created_at

@@ -14,7 +14,7 @@ const state = reactive({
 const formatted = ref("")
 const handleUpdate = async () => {
 	try{
-		await api.put(`/api/v1/tasks/edit/${id}`, {
+		await api.put(`/v1/tasks/edit/${id}`, {
 			task_title: state.task.task_title,
 			description: state.task.description,
 			due_date: formatted.value,
@@ -30,7 +30,7 @@ const handleUpdate = async () => {
 }
 
 onMounted(async () => {
-	const resp = await api.get(`/api/v1/task/${id}`)
+	const resp = await api.get(`/v1/task/${id}`)
 	state.task = resp.data
 	const iso = state.task.due_date
 	const date = new Date(iso)
